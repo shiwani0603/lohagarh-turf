@@ -1,0 +1,59 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: #ffffff;
+  color: #111827;
+  font-family: 'Inter', sans-serif;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #16a34a; border-radius: 3px; }
+
+/* Buttons */
+.btn-primary {
+  @apply inline-block bg-green-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-green-700 transition-colors;
+}
+.btn-outline {
+  @apply inline-block border-2 border-green-600 text-green-600 font-semibold px-6 py-3 rounded-lg hover:bg-green-50 transition-colors;
+}
+.btn-white {
+  @apply inline-block bg-white text-green-700 font-bold px-8 py-3 rounded-lg hover:bg-green-50 transition-colors;
+}
+
+/* Cards */
+.card {
+  @apply bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow;
+}
+
+/* Badges */
+.badge-green  { @apply inline-block bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-1 rounded-full; }
+.badge-yellow { @apply inline-block bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-1 rounded-full; }
+.badge-red    { @apply inline-block bg-red-100   text-red-800   text-xs font-semibold px-2.5 py-1 rounded-full; }
+
+/* Section headers */
+.section-label {
+  @apply block text-green-600 font-semibold text-xs uppercase tracking-widest mb-2;
+}
+.section-title {
+  @apply text-3xl md:text-4xl font-bold text-gray-900 mb-4;
+}
+
+/* Input */
+.form-input {
+  @apply w-full px-4 py-3 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none transition text-sm bg-white;
+}
+
+.container { @apply max-w-6xl mx-auto px-4 sm:px-6; }
+.section    { @apply py-16 md:py-20; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.5s ease both; }
