@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
-import { ConfirmationResult } from 'firebase/auth';
 import { Phone, KeyRound, ArrowLeft } from 'lucide-react';
 
 function LoginForm() {
@@ -14,7 +13,7 @@ function LoginForm() {
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [loading, setLoading] = useState(false);
-  const [confirmation, setConfirmation] = useState<ConfirmationResult | null>(null);
+  const [otpToken, setOtpToken] = useState<string | null>(null);
   const { sendOtp, verifyOtp } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -22,20 +21,17 @@ function LoginForm() {
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    const cleaned = phone.replace(/\s/g, '');
-    if (cleaned.length < 10) { toast.error('Enter a valid 10-digit mobile number'); return; }
-    const formatted = cleaned.startsWith('+91') ? cleaned : `+91${cleaned}`;
+    const cleaned = phone.replace(/\D/g, '');
+    if (cleaned.length !== 10) { toast.error('Enter a valid 10-digit mobile number'); return; }
     setLoading(true);
     try {
-      const result = await sendOtp(formatted);
-      setConfirmation(result);
+      const token = await sendOtp(cleaned);
+      setOtpToken(token);
       setStep('otp');
       toast.success('OTP sent to your mobile number!');
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to send OTP';
-      if (msg.includes('quota')) toast.error('SMS quota exceeded. Try again later.');
-      else if (msg.includes('invalid')) toast.error('Invalid phone number format.');
-      else toast.error('Failed to send OTP. Check your number and try again.');
+      const msg = err instanceof Error ? err.message : '';
+      toast.error(msg || 'Failed to send OTP. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -43,15 +39,16 @@ function LoginForm() {
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!confirmation) return;
+    if (!otpToken) return;
     if (otp.length !== 6) { toast.error('Enter the 6-digit OTP'); return; }
     setLoading(true);
     try {
-      await verifyOtp(confirmation, otp);
+      await verifyOtp(otpToken, otp, phone);
       toast.success('Login successful! Welcome to Lohagarh Turf.');
       router.push(redirect);
-    } catch {
-      toast.error('Invalid OTP. Please try again.');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : '';
+      toast.error(msg || 'Invalid OTP. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -141,7 +138,7 @@ function LoginForm() {
                   </span>
                 ) : 'Verify & Login'}
               </button>
-              <button type="button" onClick={() => { setStep('phone'); setOtp(''); }}
+              <button type="button" onClick={() => { setStep('phone'); setOtp(''); setOtpToken(null); }}
                 className="w-full text-center text-sm text-gray-500 hover:text-green-600 flex items-center justify-center gap-1 mt-2">
                 <ArrowLeft className="w-4 h-4" /> Change Number
               </button>

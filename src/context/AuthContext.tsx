@@ -1,15 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '@/lib/firebase';
-import {
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  ConfirmationResult,
-  User,
-  signOut,
-} from 'firebase/auth';
-import { getSupabaseClient } from '@/lib/supabase';
 
 export interface UserProfile {
   id: string;
@@ -20,83 +11,105 @@ export interface UserProfile {
   is_admin: boolean;
 }
 
+interface SimpleUser {
+  phone: string;
+  uid: string;
+}
+
 interface AuthContextType {
-  user: User | null;
+  user: SimpleUser | null;
   userProfile: UserProfile | null;
   loading: boolean;
   token: string | null;
-  sendOtp: (phone: string) => Promise<ConfirmationResult>;
-  verifyOtp: (result: ConfirmationResult, otp: string) => Promise<void>;
+  sendOtp: (phone: string) => Promise<string>;
+  verifyOtp: (otpToken: string, otp: string, phone: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
+const TOKEN_KEY = 'lohagarh_auth_token';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<SimpleUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState<string | null>(null);
 
-  const fetchProfile = async (firebaseUser: User) => {
+  const fetchProfile = async (authToken: string) => {
     try {
-      const idToken = await firebaseUser.getIdToken();
-      setToken(idToken);
       const res = await fetch('/api/auth/me', {
-        headers: { Authorization: `Bearer ${idToken}` },
+        headers: { Authorization: `Bearer ${authToken}` },
       });
       if (res.ok) {
-        const data = await res.json();
+        const data = await res.json() as { user: UserProfile };
         setUserProfile(data.user);
+        setUser({ phone: data.user.phone, uid: data.user.firebase_uid });
+      } else {
+        // Token invalid/expired — clear session
+        localStorage.removeItem(TOKEN_KEY);
+        setToken(null);
+        setUser(null);
+        setUserProfile(null);
       }
-    } catch (e) {
-      console.error('Failed to fetch profile', e);
+    } catch {
+      // Network error — keep existing state
     }
   };
 
   const refreshProfile = async () => {
-    if (user) await fetchProfile(user);
+    if (token) await fetchProfile(token);
   };
 
   useEffect(() => {
-    if (!auth) {
+    if (typeof window === 'undefined') { setLoading(false); return; }
+    const stored = localStorage.getItem(TOKEN_KEY);
+    if (stored) {
+      setToken(stored);
+      fetchProfile(stored).finally(() => setLoading(false));
+    } else {
       setLoading(false);
-      return;
     }
-    const unsub = auth.onAuthStateChanged(async (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser) {
-        await fetchProfile(firebaseUser);
-      } else {
-        setUserProfile(null);
-        setToken(null);
-      }
-      setLoading(false);
-    });
-    return unsub;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const sendOtp = async (phone: string): Promise<ConfirmationResult> => {
-    if (!auth) throw new Error('Firebase is not configured. Please set up Firebase credentials.');
-    const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-      size: 'invisible',
+  const sendOtp = async (phone: string): Promise<string> => {
+    const res = await fetch('/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone }),
     });
-    return signInWithPhoneNumber(auth, phone, verifier);
+    const data = await res.json() as { otp_token?: string; error?: string; dev_otp?: string };
+    if (!res.ok) throw new Error(data.error || 'Failed to send OTP');
+
+    // In dev mode without Fast2SMS, show OTP in console
+    if (data.dev_otp) {
+      console.log(`[Dev OTP] ${data.dev_otp}`);
+    }
+    return data.otp_token!;
   };
 
-  const verifyOtp = async (result: ConfirmationResult, otp: string) => {
-    const cred = await result.confirm(otp);
-    if (cred.user) await fetchProfile(cred.user);
+  const verifyOtp = async (otpToken: string, otp: string, phone: string): Promise<void> => {
+    const res = await fetch('/api/auth/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, otp, otp_token: otpToken }),
+    });
+    const data = await res.json() as { token?: string; user?: UserProfile; error?: string };
+    if (!res.ok) throw new Error(data.error || 'Invalid OTP');
+
+    localStorage.setItem(TOKEN_KEY, data.token!);
+    setToken(data.token!);
+    setUserProfile(data.user!);
+    setUser({ phone: data.user!.phone, uid: data.user!.firebase_uid });
   };
 
   const logout = async () => {
-    if (!auth) return;
-    await signOut(auth);
+    localStorage.removeItem(TOKEN_KEY);
+    setToken(null);
     setUser(null);
     setUserProfile(null);
-    setToken(null);
   };
 
   return (

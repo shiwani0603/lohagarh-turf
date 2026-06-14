@@ -11,9 +11,6 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
-  experimental: {
-    serverComponentsExternalPackages: ['firebase-admin'],
-  },
 };
 
 module.exports = nextConfig;
