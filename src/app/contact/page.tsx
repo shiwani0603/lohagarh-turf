@@ -5,7 +5,7 @@ import { Phone, MapPin, Clock, MessageCircle } from 'lucide-react';
 
 export default function ContactPage() {
   const [contactInfo, setContactInfo] = useState<{ phone: string; address: string; hours: string } | null>(null);
-  const adminPhone = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP?.replace('+', '') || '917777777777';
+  const adminPhone = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP?.replace('+', '') || '917793014321';
 
   useEffect(() => {
     fetch('/api/admin/content?key=contact_info')

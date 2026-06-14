@@ -69,7 +69,7 @@ export default function AdminBookingsPage() {
   };
 
   const sendWhatsApp = (booking: Booking) => {
-    const adminPhone = (process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '+917777777777').replace('+', '');
+    const adminPhone = (process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '+917793014321').replace('+', '');
     const phone = booking.users.phone.replace('+91', '').replace('+', '');
     const msg = encodeURIComponent(
       `✅ *Lohagarh Turf — Booking Confirmed!*\n\n` +

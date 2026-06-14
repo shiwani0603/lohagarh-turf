@@ -33,7 +33,7 @@ export default function Navigation() {
   };
 
   const whatsappAdmin = () => {
-    const phone = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP?.replace('+', '') || '917777777777';
+    const phone = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP?.replace('+', '') || '917793014321';
     window.open(`https://wa.me/${phone}?text=Hello%2C%20I%20need%20help%20with%20Lohagarh%20Turf%20booking.`, '_blank');
   };
 

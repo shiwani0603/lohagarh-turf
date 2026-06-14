@@ -48,4 +48,4 @@ export function getMaxDuration(startTime: string, slotType: SlotType): number {
 
 export const SPORTS = ['Football', 'Box Cricket', 'Frisbee', 'Any Turf Game'];
 
-export const ADMIN_PHONE = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '+917777777777';
+export const ADMIN_PHONE = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '+917793014321';
