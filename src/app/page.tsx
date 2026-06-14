@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Phone, Clock, Wifi, Car, Shield, ShoppingBag, Zap, Mic2, Leaf } from 'lucide-react';
+import { MapPin, Phone, Clock, Wifi, Car, Shield, ShoppingBag, Zap, Leaf } from 'lucide-react';
 
 const PRICING = [
   { days: 'Monday – Friday', period: 'Day Time (5am – 5pm)', price: 599, icon: '☀️' },
@@ -14,7 +14,6 @@ const PRICING = [
 const FACILITIES = [
   { icon: <Leaf className="w-7 h-7 text-green-600" />, name: 'Artificial Turf', desc: 'Premium synthetic turf surface' },
   { icon: <Zap className="w-7 h-7 text-yellow-500" />, name: 'Flood Lights', desc: 'Full illumination for night play' },
-  { icon: <Mic2 className="w-7 h-7 text-blue-500" />, name: 'Commentary System', desc: 'Professional match commentary' },
   { icon: <Car className="w-7 h-7 text-gray-600" />, name: 'Free Parking', desc: 'Ample parking space' },
   { icon: <Shield className="w-7 h-7 text-indigo-600" />, name: 'CCTV Security', desc: 'Round-the-clock monitoring' },
   { icon: <ShoppingBag className="w-7 h-7 text-orange-500" />, name: 'Canteen', desc: 'Refreshments & snacks available' },
@@ -28,7 +27,6 @@ export default function Home() {
       <section className="bg-sky-50 py-8 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-8">
-            {/* Logo + Pricing */}
             <div className="flex-1">
               <div className="flex items-center gap-4 mb-6">
                 <Image src="/logo.png" alt="Lohagarh Turf" width={80} height={80} className="h-20 w-auto"
@@ -54,12 +52,11 @@ export default function Home() {
                 <Link href="/book" className="flex-1 text-center bg-green-600 text-white font-semibold py-3 rounded-xl hover:bg-green-700 transition-colors">
                   Book Now
                 </Link>
-                <a href="tel:7777777777" className="flex-1 text-center border-2 border-green-600 text-green-600 font-semibold py-3 rounded-xl hover:bg-green-50 transition-colors">
+                <a href="tel:7793014321" className="flex-1 text-center border-2 border-green-600 text-green-600 font-semibold py-3 rounded-xl hover:bg-green-50 transition-colors">
                   Call Us
                 </a>
               </div>
             </div>
-            {/* Decorative illustration */}
             <div className="hidden lg:flex flex-col items-center text-center">
               <div className="text-8xl mb-3">⚽</div>
               <p className="text-gray-500 text-sm max-w-xs">Football · Box Cricket · Frisbee & more</p>
@@ -68,11 +65,36 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Contact + Map ── */}
+      {/* ── How It Works ── (swapped above Contact) */}
+      <section className="py-14 px-4 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-green-600 font-semibold text-sm uppercase tracking-widest mb-2">SIMPLE PROCESS</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-10">How to Book</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {[
+              { step: '01', title: 'Select Date & Slot', desc: 'Choose your preferred date, time period (day/night) and duration.' },
+              { step: '02', title: 'Pay Online', desc: 'Pay securely via GPay or PhonePe QR code. Quick and hassle-free.' },
+              { step: '03', title: 'Get Confirmed', desc: 'Receive WhatsApp confirmation with your booking details instantly.' },
+            ].map(s => (
+              <div key={s.step} className="flex flex-col items-center">
+                <div className="w-14 h-14 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-lg mb-4">{s.step}</div>
+                <h3 className="font-bold text-gray-800 mb-2">{s.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-10">
+            <Link href="/book" className="inline-flex items-center gap-2 bg-green-600 text-white font-bold px-8 py-4 rounded-2xl hover:bg-green-700 transition-colors text-lg shadow-lg shadow-green-200">
+              Book Your Slot Now →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Contact + Map ── (swapped below How to Book) */}
       <section className="bg-gray-900 py-10 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            {/* Contact info */}
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="bg-green-600/20 rounded-full p-3 mt-1">
@@ -80,7 +102,7 @@ export default function Home() {
                 </div>
                 <div>
                   <p className="text-green-400 font-semibold text-sm uppercase tracking-wide mb-1">Phone</p>
-                  <a href="tel:7777777777" className="text-white text-lg font-semibold hover:text-green-400 transition-colors">7777777777</a>
+                  <a href="tel:7793014321" className="text-white text-lg font-semibold hover:text-green-400 transition-colors">7793014321</a>
                   <p className="text-gray-400 text-sm">Available 24/7 for bookings</p>
                 </div>
               </div>
@@ -104,17 +126,17 @@ export default function Home() {
                   <p className="text-gray-400 text-sm">7 days a week · All slots bookable online</p>
                 </div>
               </div>
-              <a href="https://maps.app.goo.gl/j3WPLqvfji44WfYq6" target="_blank" rel="noopener noreferrer"
+              <a href="https://maps.app.goo.gl/sLc4DVE2qwpSUL256" target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl hover:bg-green-700 transition-colors font-semibold">
                 <MapPin className="w-4 h-4" />
                 Open in Google Maps
               </a>
             </div>
 
-            {/* Google Map */}
+            {/* Updated Google Map embed */}
             <div className="rounded-2xl overflow-hidden shadow-xl h-64 lg:h-80">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3556.8!2d77.49!3d27.217!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x397370b9ca0e3e3f%3A0x3b2b3b3b3b3b3b3b!2sKeoladeo%20National%20Park!5e0!3m2!1sen!2sin!4v1"
+                src="https://maps.google.com/maps?q=Lohagarh+Turf+Bharatpur+Rajasthan&output=embed&z=16"
                 width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade" title="Lohagarh Turf Location" />
             </div>
@@ -163,14 +185,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Facilities ── */}
+      {/* ── Facilities ── (Commentary System removed) */}
       <section id="amenities" className="py-14 px-4 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10">
             <p className="text-green-600 font-semibold text-sm uppercase tracking-widest mb-2">WHAT WE OFFER</p>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">Facilities &amp; Amenities</h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
             {FACILITIES.map((f, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow border border-gray-100">
                 <div className="flex justify-center mb-3">{f.icon}</div>
@@ -178,32 +200,6 @@ export default function Home() {
                 <p className="text-gray-500 text-xs">{f.desc}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── How It Works ── */}
-      <section className="py-14 px-4 bg-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-green-600 font-semibold text-sm uppercase tracking-widest mb-2">SIMPLE PROCESS</p>
-          <h2 className="text-3xl font-bold text-gray-900 mb-10">How to Book</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-            {[
-              { step: '01', title: 'Select Date & Slot', desc: 'Choose your preferred date, time period (day/night) and duration.' },
-              { step: '02', title: 'Pay Online', desc: 'Pay securely via GPay or PhonePe QR code. Quick and hassle-free.' },
-              { step: '03', title: 'Get Confirmed', desc: 'Receive WhatsApp confirmation with your booking details instantly.' },
-            ].map(s => (
-              <div key={s.step} className="flex flex-col items-center">
-                <div className="w-14 h-14 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-lg mb-4">{s.step}</div>
-                <h3 className="font-bold text-gray-800 mb-2">{s.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-10">
-            <Link href="/book" className="inline-flex items-center gap-2 bg-green-600 text-white font-bold px-8 py-4 rounded-2xl hover:bg-green-700 transition-colors text-lg shadow-lg shadow-green-200">
-              Book Your Slot Now →
-            </Link>
           </div>
         </div>
       </section>

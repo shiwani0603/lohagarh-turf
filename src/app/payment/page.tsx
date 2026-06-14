@@ -10,6 +10,7 @@ import { useCart } from '@/context/CartContext';
 import { formatTime } from '@/lib/pricing';
 import { format, parseISO } from 'date-fns';
 import { Calendar, Clock, Shield, CheckCircle, Upload, ArrowLeft, Copy, Check } from 'lucide-react';
+import TnCModal from '@/components/TnCModal';
 
 export default function PaymentPage() {
   const { user, token } = useAuth();
@@ -17,6 +18,7 @@ export default function PaymentPage() {
   const router = useRouter();
 
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showTnC, setShowTnC] = useState(false);
   const [txnRef, setTxnRef] = useState('');
   const [screenshot, setScreenshot] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -171,9 +173,10 @@ export default function PaymentPage() {
               className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500" />
             <span className="text-sm text-gray-700">
               I agree to the{' '}
-              <Link href="/terms" target="_blank" className="text-green-600 hover:underline font-medium">
-                Terms & Conditions
-              </Link>
+              <button type="button" onClick={() => setShowTnC(true)}
+                className="text-green-600 hover:underline font-medium">
+                Terms &amp; Conditions
+              </button>
             </span>
           </label>
         </div>
@@ -288,6 +291,8 @@ export default function PaymentPage() {
           Your slot will be confirmed after payment verification via WhatsApp
         </p>
       </div>
+
+      {showTnC && <TnCModal onClose={() => setShowTnC(false)} />}
     </div>
   );
 }
