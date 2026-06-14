@@ -36,62 +36,57 @@ export default function Home() {
     <div className="pt-16">
 
       {/* ── Hero / Pricing Banner ── */}
-      <section className="bg-gradient-to-br from-green-700 to-green-900 py-12 px-4 text-white">
+      <section className="bg-sky-50 py-8 px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col lg:flex-row items-center gap-10">
+          <div className="flex flex-col lg:flex-row items-center gap-8">
             <div className="flex-1 w-full">
               {/* Logo + Title */}
-              <div className="flex items-center gap-4 mb-6">
-                <Image src="/logo.png" alt="Lohagarh Turf" width={80} height={80} className="h-16 w-auto"
+              <div className="flex items-center gap-4 mb-4">
+                <Image src="/logo.png" alt="Lohagarh Turf" width={80} height={80} className="h-20 w-auto"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                 <div>
-                  <h1 className="text-2xl font-bold">Lohagarh Turf</h1>
-                  <p className="text-green-200 text-sm">Bharatpur&apos;s Premier Sports Facility</p>
+                  <h1 className="text-2xl font-bold text-gray-900">Lohagarh Turf</h1>
+                  <p className="text-gray-500 text-sm">Bharatpur&apos;s Premier Sports Facility</p>
                 </div>
               </div>
 
               {/* Games row */}
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {GAMES.map(g => (
-                  <span key={g.name} className="flex items-center gap-1.5 bg-white/10 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+                  <span key={g.name} className="flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-full">
                     <span>{g.emoji}</span>{g.name}
                   </span>
                 ))}
               </div>
 
               {/* Pricing cards */}
-              <div className="grid grid-cols-2 gap-3 mb-6">
+              <div className="grid grid-cols-2 gap-3 mb-4">
                 {PRICING.map((p, i) => (
                   <div key={i} className={`bg-gradient-to-br ${p.bg} rounded-2xl p-4 border ${p.border}`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${p.badge}`}>{p.icon} {p.period}</span>
-                    </div>
-                    <p className="text-xs text-gray-500 font-medium mb-1">{p.days}</p>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${p.badge}`}>{p.icon} {p.period}</span>
+                    <p className="text-xs text-gray-500 font-medium mt-2 mb-0.5">{p.days}</p>
                     <p className="text-xs text-gray-400 mb-2">{p.hours}</p>
                     <p className="text-2xl font-extrabold text-gray-900">
-                      ₹{p.price}
-                      <span className="text-sm font-normal text-gray-500">/hr</span>
+                      ₹{p.price}<span className="text-sm font-normal text-gray-500">/hr</span>
                     </p>
                   </div>
                 ))}
               </div>
 
               <div className="flex gap-3">
-                <Link href="/book" className="flex-1 text-center bg-white text-green-700 font-bold py-3 rounded-xl hover:bg-green-50 transition-colors">
+                <Link href="/book" className="flex-1 text-center bg-green-600 text-white font-semibold py-3 rounded-xl hover:bg-green-700 transition-colors">
                   Book Now
                 </Link>
-                <a href={`https://wa.me/${WHATSAPP}?text=Hello%2C%20I%20want%20to%20book%20Lohagarh%20Turf.`}
-                  target="_blank" rel="noopener noreferrer"
-                  className="flex-1 text-center border-2 border-white/50 text-white font-bold py-3 rounded-xl hover:bg-white/10 transition-colors">
-                  WhatsApp Us
+                <a href="tel:7793014321" className="flex-1 text-center border-2 border-green-600 text-green-600 font-semibold py-3 rounded-xl hover:bg-green-50 transition-colors">
+                  Call Us
                 </a>
               </div>
             </div>
 
             {/* Right decoration */}
             <div className="hidden lg:flex flex-col items-center text-center">
-              <div className="text-9xl mb-3">🏟️</div>
-              <p className="text-green-200 text-sm max-w-xs">Open 5 AM – 12 AM · 7 days a week</p>
+              <div className="text-8xl mb-3">⚽</div>
+              <p className="text-gray-500 text-sm max-w-xs">Box Cricket · Football · Frisbee &amp; more</p>
             </div>
           </div>
         </div>
