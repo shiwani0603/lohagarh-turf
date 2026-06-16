@@ -21,7 +21,7 @@ interface AuthContextType {
   userProfile: UserProfile | null;
   loading: boolean;
   token: string | null;
-  sendOtp: (phone: string) => Promise<string>;
+  sendOtp: (phone: string) => Promise<{ token: string; smsFailed: boolean; error?: string }>;
   verifyOtp: (otpToken: string, otp: string, phone: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -74,20 +74,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const sendOtp = async (phone: string): Promise<string> => {
+  const sendOtp = async (phone: string): Promise<{ token: string; smsFailed: boolean; error?: string }> => {
     const res = await fetch('/api/auth/send-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone }),
     });
-    const data = await res.json() as { otp_token?: string; error?: string; dev_otp?: string };
-    if (!res.ok) throw new Error(data.error || 'Failed to send OTP');
+    const data = await res.json() as {
+      otp_token?: string;
+      error?: string;
+      dev_otp?: string;
+      sms_failed?: boolean;
+    };
 
-    // In dev mode without Fast2SMS, show OTP in console
-    if (data.dev_otp) {
-      console.log(`[Dev OTP] ${data.dev_otp}`);
-    }
-    return data.otp_token!;
+    if (!data.otp_token) throw new Error(data.error || 'Failed to generate OTP');
+
+    if (data.dev_otp) console.log(`[Dev OTP] ${data.dev_otp}`);
+
+    return {
+      token: data.otp_token,
+      smsFailed: !!data.sms_failed,
+      error: data.error,
+    };
   };
 
   const verifyOtp = async (otpToken: string, otp: string, phone: string): Promise<void> => {
