@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { signJWT } from '@/lib/jwt';
 
+const ADMIN_WA = (process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || '+917793014321').replace('+', '');
+
 export async function POST(req: NextRequest) {
   const { phone } = await req.json();
 
@@ -10,35 +12,44 @@ export async function POST(req: NextRequest) {
   }
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-  // Sign OTP in a short-lived token (stateless — no DB needed)
-  const otp_token = signJWT({ phone: `+91${cleaned}`, otp }, 5 * 60); // 5 min
+  const otp_token = signJWT({ phone: `+91${cleaned}`, otp }, 5 * 60);
 
   const apiKey = process.env.FAST2SMS_API_KEY;
 
   if (!apiKey) {
-    // Development mode: return OTP directly (safe only in dev)
     console.log(`[DEV] OTP for +91${cleaned}: ${otp}`);
     return NextResponse.json({
       otp_token,
       dev_otp: otp,
-      message: 'OTP generated (FAST2SMS_API_KEY not set — showing OTP for dev)',
+      whatsapp_fallback: `https://wa.me/${ADMIN_WA}?text=OTP+request+for+%2B91${cleaned}`,
+      message: 'FAST2SMS_API_KEY not set in Vercel env vars',
     });
   }
 
-  // Send OTP via Fast2SMS
   try {
     const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&route=otp&variables_values=${otp}&flash=0&numbers=${cleaned}`;
     const smsRes = await fetch(url, { method: 'GET' });
-    const smsData = await smsRes.json() as { return: boolean; message?: string[] };
+    const smsData = await smsRes.json() as { return: boolean; message?: string[]; status_code?: number };
+
+    console.log('Fast2SMS response:', JSON.stringify(smsData));
 
     if (!smsData.return) {
-      console.error('Fast2SMS error:', smsData);
-      return NextResponse.json({ error: 'Failed to send OTP. Please try again.' }, { status: 500 });
+      const reason = smsData.message?.[0] || 'Unknown Fast2SMS error';
+      console.error('Fast2SMS failed:', reason, '| Status:', smsData.status_code);
+      // Return whatsapp fallback so user can still get OTP
+      return NextResponse.json({
+        otp_token,
+        error: `SMS failed: ${reason}`,
+        whatsapp_fallback: `https://wa.me/${ADMIN_WA}?text=OTP+request+for+%2B91${cleaned}`,
+      }, { status: 500 });
     }
   } catch (err) {
     console.error('Fast2SMS fetch error:', err);
-    return NextResponse.json({ error: 'Failed to send OTP. Check your connection.' }, { status: 500 });
+    return NextResponse.json({
+      otp_token,
+      error: 'SMS service unreachable. Please try WhatsApp.',
+      whatsapp_fallback: `https://wa.me/${ADMIN_WA}?text=OTP+request+for+%2B91${cleaned}`,
+    }, { status: 500 });
   }
 
   return NextResponse.json({ otp_token, message: 'OTP sent successfully' });
